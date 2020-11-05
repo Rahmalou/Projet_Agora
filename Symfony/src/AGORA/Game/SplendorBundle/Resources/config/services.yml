@@ -1,0 +1,4 @@
+services:
+    agora_game.splendor:
+        class: AGORA\Game\SplendorBundle\Service\SplendorService
+        arguments: ["@doctrine.orm.entity_manager"]

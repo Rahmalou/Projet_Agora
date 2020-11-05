@@ -1,0 +1,89 @@
+<div class="panel-group">
+    <div id="add-user" class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#userList">Listes des utilisateurs</a>
+            </h4>
+        </div>
+        <div id="userList" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <p>
+                    <input class="form-control" id="searchUserList" type="text" placeholder="Rechercher..">
+                </p>
+                <table id="tableUserList" class="table table-bordered table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <td>Rôle</td>
+                            <td>Username</td>
+                            <td>Email</td>
+                            <td>Actions</td>
+                        </tr>
+                    </thead>
+                    <tbody id="userListTableBody">
+                    {% for membre in users %}
+                        <tr>
+                            <td>
+                                {# Affichage du role de l'utilisateur #}
+                                {% if membre.roles.0 == 'ROLE_ADMIN' %}
+                                    <span data-toggle="tooltip" title="Administrateur">Administrateur</span>
+                                {% elseif membre.roles.0 == 'ROLE_MODO' %}
+                                    <span data-toggle="tooltip" title="Modérateur">Modérateur</span>
+                                {% endif %}
+                            </td>
+                            <td><a>{{ membre.username }}</a></td>
+                            <td><a>{{ membre.email }}</a></td>
+                            <td>
+                                {#Si Administrateur#}
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    {% if membre.roles.0 != 'ROLE_ADMIN' %}
+                                        <span data-toggle="tooltip" title="Irreversible : Supprime l'uilisateur">
+                                        <button class="btn btn-danger btn-xs" onclick="ajaxRemoveId({{ membre.id }})">Supprimer</button>
+                                    </span>
+                                        {% if membre.roles.0 == 'ROLE_USER' %}
+                                            <span data-toggle="tooltip" title="Promouvoir en tant que modérateur cet utilisateur">
+                                            <button class="btn btn-success btn-xs" onclick="ajaxPromoteId({{ membre.id }})">Promouvoir</button>
+                                        </span>
+                                        {% elseif membre.roles.0 == 'ROLE_MODO' %}
+                                            <span data-toggle="tooltip" title="Destituer le role de modérateur à cet utilisateur">
+                                        <button class="btn btn-warning btn-xs" onclick="ajaxDemoteId({{ membre.id }})">Destituer</button>
+                                    </span>
+                                        {% endif %}
+                                        <span data-toggle="tooltip" title="Modifier les informations de cet utilisateur">
+                                        <button class="btn btn-info btn-xs disabled">Editer</button>
+                                    </span>
+                                    {% else %}
+                                        <span>Aucune action possible.</span>
+                                    {% endif %}
+                                {% else %}
+                                {#Si Modérateur#}
+                                {% if is_granted('ROLE_MODO') %}
+                                    {% if membre.roles.0 != 'ROLE_ADMIN' %}
+                                        <span data-toggle="tooltip" title="Irreversible : Supprime l'uilisateur">
+                                        <button class="btn btn-danger btn-xs" onclick="ajaxRemoveId({{ membre.id }})">Supprimer</button>
+                                    </span>
+                                        {% elseif membre.roles.0 == 'ROLE_MODO' %}
+                                            <span data-toggle="tooltip" title="Destituer le role de modérateur à cet utilisateur">
+                                        <button class="btn btn-warning btn-xs" onclick="ajaxDemoteId({{ membre.id }})">Destituer</button>
+                                    </span>
+                                        {% endif %}
+                                        <span data-toggle="tooltip" title="Modifier les informations de cet utilisateur">
+                                        <button class="btn btn-info btn-xs disabled">Editer</button>
+                                    </span>
+                                    {% else %}
+                                        <span>Aucune action possible.</span>
+                                {% endif %}
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">Aucun utilisateur n'a été trouvé.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

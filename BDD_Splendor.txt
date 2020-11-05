@@ -1,0 +1,16 @@
+Table "Card" avec champs -> gameId : Int, prestige : Int, level : Int, emeraldTokens : Int, sapphireTokens : Int, rubyTokens : Int, diamondTokens : Int, onyxTokens : Int, bonus : Varchar(50)
+Table "Game" avec champs -> listTokens : Varchar(50), idCards : Varchar(50), idNobles : Varchar(50)
+Table "Player" avec champs -> gameId : Int, id_user : Int, prestige : Int, listTokens : Varchar(50), reservedCards : Varchar(50), buyedCards : Varchar(50)
+
+listTokens -> String de la forme : "nbEmeraldTokens,nbSapphireTokens,nbRubyTokens,nbDiamondTokens,nbOnyxTokens,nbJokerGoldTokens".
+idCards/idNobles -> liste des id des cartes/nobles présent sur le plateau de jeu sous la forme d'une String : "id1,id2,id3".
+reservedCards/buyedCards -> liste des id des cartes réservées/jouées par le joueur sous la forme d'une String : "id1,id2,id3".
+bunus -> String vallant une des valeur suivante : "Green", "Blue", "Red", "White", "Black", "Noble".
+
+Chez les joueurs(Player) les nobles ne sont pas stocké mais la valeur des points de prestige sont directement augmentés.
+
+Noble = Card où (prestige = 3 et bonus = Noble et level = 0)
+
+
+
+!!!!!!!!!!!!!! Mettre a jour la BDD : php bin/console doctrine:schema:update --force !!!!!!!!!!!!!!!!!!!!!!

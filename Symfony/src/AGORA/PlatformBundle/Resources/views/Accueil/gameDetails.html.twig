@@ -1,0 +1,19 @@
+{% extends "AGORAPlatformBundle::layout.html.twig" %}
+{% block title %}{{ parent() }} - {{ gameInfo.nom }} {% endblock %}
+
+{% block header %}
+    <h1>{{ gameInfo.nom }}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="gameDetails">
+<img class="imgJeuBig" src="{{asset('bundles/agoraplatform/image/availableGame/' ~ gameInfo.imageURL) }}" alt="pas encore là"/>
+
+<div class="descriJeu">
+{{ gameInfo.description }}
+</div>
+
+<button id="reglesButt" onclick="window.location.href='{{ gameInfo.reglesURL }}'">règles</button>
+<button id="playButt" onclick="window.location.href='{{ path('agora_platform_game_create', {'gameId' : gameInfo.id}) }}'">jouer</button>
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+services:
+    agora_game_sqp.sqpapi:
+        class: AGORA\Game\SQPBundle\Model\SQPAPI
+        arguments: ["@doctrine.orm.entity_manager"]

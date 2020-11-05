@@ -1,0 +1,406 @@
+{% extends "AGORAPlatformBundle::layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Accueil{% endblock %}
+
+{% block header %}
+    <h1>Mes Parties</h1>
+{% endblock %}
+
+{% block content %}
+	<script src="{{ asset('bundles/agoragamesqp/script/vendor/modernizr-3.5.0.min.js') }}"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+    //Fonction exécutée lors d'un click sur rejoindre la partie avec un mot de passe
+    function promptMDP(path) {
+        var pass = prompt("Entrez le mot de passe du lobby");
+        var method = "post"; // Set method to post by default if not specified.
+
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "pass");
+        hiddenField.setAttribute("value", pass);
+
+        form.appendChild(hiddenField);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+</script>
+    <h2>Ave Cesar</h2>
+
+    <table id="joinGameTableAVC" class="display">
+        <thead>
+        <tr>
+            <th>Nom du lobby</th>
+            <th>Personnes présentes en jeu</th>
+            <th>Nombre de joueurs requis</th>
+            <th>Date de création</th>
+            <th>Privée</th>
+            <th>Lien</th>
+        </tr>
+        </thead>
+        {% for game in games %}
+            {% if game.gameInfoId.id == 1 %}
+
+            <!-- on filtre les parties de l'utilisateur-->
+        	{% for gameCode,pls in players %}
+        	{% if gameCode == "avc" %}
+            {% for key, pls2 in pls %}
+            {% if key == game.id and game.state == "started" %}
+            {% for pl in pls2 %}
+			{% if pl.userId.id  == userId and pls2|length == game.nbPlayers %}
+			<!-------------------------------------------->
+            <tr>
+                <td>
+                    {{ game.name }}
+                </td>
+
+                <td>{% for gameCode,pls in players %}
+                        {% if gameCode == "avc" %}
+                            {% for key, pls2 in pls %}
+                                {% if key == game.id %}
+                                    {% for pl in pls2 %}
+                                        {% if game.idHost == pl.userId.id %}
+                                            {#{% if pl.lastCardPlayed is null %}
+                                                [<b><u>{{ pl.userId.username }}</u></b>]
+                                            {% else %}#}
+                                                [<u>{{ pl.userId.username }}</u>]
+                                            {#{% endif %}#}
+                                        {% else %}{#
+                                            {% if pl.lastCardPlayed is null %}
+                                                [<b>{{ pl.userId.username }}</b>]
+                                            {% else %}#}
+                                                [{{ pl.userId.username }}]
+                                            {#{% endif %}#}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ game.nbPlayers }}
+                </td>
+
+                <td>
+                    {{ game.dateCrea|date('Y-m-d') }}
+                </td>
+                <td>
+                    {% if game.private == 0 %}
+                        Non
+                    {% else %}
+                        Oui
+                    {% endif %}
+                </td>
+                <td>
+                    {% if game.private == 1 %}
+                        <script>var path = "{{ path('agora_game_join_avc', {'gameId': game.id }) }}";</script>
+                        <a onclick="promptMDP(path);">Rejoindre</a>
+                    {% else %}
+                        <a href="{{ path('agora_game_join_avc', {'gameId': game.id }) }}">Revenir</a>
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% endif %}
+			{% endfor %}
+			{% endif %}
+			{% endfor %}
+			{% endif %}
+			{% endfor %}
+            {% endif %}
+        {% endfor %}
+    </table>
+
+
+    <h2>6 qui prend</h2>
+	<table id="joinGameTableSQP">
+		<thead>
+		<tr>
+	        <th>Nom du lobby</th>
+	        <th>Personnes présentes en jeu</th>
+	        <th>Nombre de joueurs requis</th>
+	        <th>Date de création</th>
+	        <th>Privée</th>
+	        <th>Lien</th>
+		</tr>
+		</thead>
+		{% for game in gamesSQP %}
+			<!-- on filtre les parties de l'utilisateur-->
+			{% for k,j in playersSQP %}
+			{% if k == game.id %}
+			{% for j2 in j %}
+			{% if j2.idUser.id  == userId and j|length == game.nbPlayers %}
+			<!-------------------------------------------->
+			<tr>
+	            <td>
+	                {{ game.name }}
+	            </td>
+
+				<td>
+					{% for key, pls in playersSQP %}
+						{% if key == game.id %}
+							{% for pl in pls %}
+	                            {% if game.idHost == pl.idUser.id %}
+	                                {% if pl.lastCardPlayed is null %}
+	                                    [<b><u>{{ pl.idUser.username }}</u></b>]
+	                                    {% else %}
+	                                        [<u>{{ pl.idUser.username }}</u>]
+	                                        {% endif %}
+	                            {% else %}
+	                                {% if pl.lastCardPlayed is null %}
+	                                    [<b>{{ pl.idUser.username }}</b>]
+	                                    {% else %}
+	                                    [{{ pl.idUser.username }}]
+	                                    {% endif %}
+	                            {% endif %}
+	                        {% endfor %}
+						{% endif %}
+					{% endfor %}
+				</td>
+	            <td>
+	                {{ game.nbPlayers }}
+	            </td>
+
+	            <td>
+	                {{ game.dateCrea|date('Y-m-d') }}
+	            </td>
+	            <td>
+	                {% if game.private == 0 %}
+	                    Non
+	                {% else %}
+	                    Oui
+	                {% endif %}
+	            </td>
+				<td>
+	                {% if game.private == 1 %}
+	                    <script>var path = "{{ path('agora_game_join_sqp', {'idGame': game.id }) }}";</script>
+	                    <a onclick="promptMDP(path);">Rejoindre</a>
+	                {% else %}
+	                <a href="{{ path('agora_game_join_sqp', {'idGame': game.id }) }}">Revenir</a>
+	                {% endif %}
+	            </td>
+			</tr>
+
+			{% endif %}
+			{% endfor %}
+			{% endif %}
+			{% endfor %}
+
+		{% endfor %}
+	</table>
+    <h2>Splendor</h2>
+
+    <table id="joinGameTableSPLDR" class="display">
+        <thead>
+        <tr>
+            <th>Nom du lobby</th>
+            <th>Personnes présentes en jeu</th>
+            <th>Nombre de joueurs requis</th>
+            <th>Date de création</th>
+            <th>Privée</th>
+            <th>Lien</th>
+        </tr>
+        </thead>
+        {% for game in games %}
+            {% if game.gameInfoId.id == 4 %}
+            <!-- on filtre les parties de l'utilisateur-->
+            {% for gameCode,pls in players %}
+                {% if gameCode == "spldr" %}
+                    {% for key, pls2 in pls %}
+                        {% if key == game.id and game.state == "started" %}
+                            {% for pl in pls2 %}
+                                {% if pl.idUser.id  == userId and pls2|length == game.nbPlayers %}
+                                    <!-------------------------------------------->
+                                    <tr>
+                                        <td>
+                                            {{ game.name }}
+                                        </td>
+
+                                        <td>{% for gameCode,pls in players %}
+                                                {% if gameCode == "spldr" %}
+                                                    {% for key, pls2 in pls %}
+                                                        {% if key == game.id %}
+                                                            {% for pl in pls2 %}
+                                                                {% if game.idHost == pl.idUser.id %}
+                                                                    {#{% if pl.lastCardPlayed is null %}
+                                                                        [<b><u>{{ pl.userId.username }}</u></b>]
+                                                                    {% else %}#}
+                                                                    [<u>{{ pl.idUser.username }}</u>]
+                                                                    {#{% endif %}#}
+                                                                {% else %}{#
+                                            {% if pl.lastCardPlayed is null %}
+                                                [<b>{{ pl.userId.username }}</b>]
+                                            {% else %}#}
+                                                                    [{{ pl.idUser.username }}]
+                                                                    {#{% endif %}#}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {{ game.nbPlayers }}
+                                        </td>
+
+                                        <td>
+                                            {{ game.dateCrea|date('Y-m-d') }}
+                                        </td>
+                                        <td>
+                                            {% if game.private == 0 %}
+                                                Non
+                                            {% else %}
+                                                Oui
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if game.private == 1 %}
+                                                <script>var path = "{{ path('agora_game_splendor_homepage', {'gameId': game.gameId }) }}";</script>
+                                                <a onclick="promptMDP(path);">Rejoindre</a>
+                                            {% else %}
+                                                <a href="{{ path('agora_game_splendor_homepage', {'gameId': game.gameId }) }}">Revenir</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </table>
+    <h2>Augustus</h2>
+
+    <table id="joinGameTableAUG" class="display">
+        <thead>
+        <tr>
+            <th>Nom du lobby</th>
+            <th>Personnes présentes en jeu</th>
+            <th>Nombre de joueurs requis</th>
+            <th>Date de création</th>
+            <th>Privée</th>
+            <th>Lien</th>
+        </tr>
+        </thead>
+        {% for game in games %}
+            {% if game.gameInfoId.id == 4 %}
+            <!-- on filtre les parties de l'utilisateur-->
+            {% for gameCode,pls in players %}
+                {% if gameCode == "aug" %}
+                    {% for key, pls2 in pls %}
+                        {% if key == game.id and game.state == "started" %}
+                            {% for pl in pls2 %}
+                                {% if pl.idUser.id  == userId and pls2|length == game.nbPlayers %}
+                                    <!-------------------------------------------->
+                                    <tr>
+                                        <td>
+                                            {{ game.name }}
+                                        </td>
+
+                                        <td>{% for gameCode,pls in players %}
+                                                {% if gameCode == "aug" %}
+                                                    {% for key, pls2 in pls %}
+                                                        {% if key == game.id %}
+                                                            {% for pl in pls2 %}
+                                                                {% if game.idHost == pl.idUser.id %}
+                                                                    {#{% if pl.lastCardPlayed is null %}
+                                                                        [<b><u>{{ pl.userId.username }}</u></b>]
+                                                                    {% else %}#}
+                                                                    [<u>{{ pl.idUser.username }}</u>]
+                                                                    {#{% endif %}#}
+                                                                {% else %}{#
+                                            {% if pl.lastCardPlayed is null %}
+                                                [<b>{{ pl.userId.username }}</b>]
+                                            {% else %}#}
+                                                                    [{{ pl.idUser.username }}]
+                                                                    {#{% endif %}#}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {{ game.nbPlayers }}
+                                        </td>
+
+                                        <td>
+                                            {{ game.dateCrea|date('Y-m-d') }}
+                                        </td>
+                                        <td>
+                                            {% if game.private == 0 %}
+                                                Non
+                                            {% else %}
+                                                Oui
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if game.private == 1 %}
+												<script>var path = "{{ path('agora_game_join_aug', {'gameId': game.gameId }) }}";</script>
+												<a onclick="promptMDP(path);">Rejoindre</a>
+											{% else %}
+												<a href="{{ path('agora_game_join_aug', {'gameId': game.gameId }) }}">Rejoindre</a>
+											{% endif %}
+                                        </td>
+                                    </tr>
+
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </table>
+
+	<script>
+        $('#joinGameTableSQP').addClass("display");
+        $(document).ready( function () {
+            $('table.display').DataTable(
+                {"paging": true,
+
+                    //"scrollCollapse": true,
+                    "language" : {
+                        "sProcessing":     "Traitement en cours...",
+                        "sSearch":         "Rechercher&nbsp;:",
+                        "sLengthMenu":     "Afficher _MENU_ &eacute;l&eacute;ments",
+                        "sInfo":           "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+                        "sInfoEmpty":      "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+                        "sInfoFiltered":   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                        "sInfoPostFix":    "",
+                        "sLoadingRecords": "Chargement en cours...",
+                        "sZeroRecords":    "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                        "sEmptyTable":     "Aucune donn&eacute;e disponible dans le tableau",
+                        "oPaginate": {
+                            "sFirst":      "Premier",
+                            "sPrevious":   "Pr&eacute;c&eacute;dent",
+                            "sNext":       "Suivant",
+                            "sLast":       "Dernier"
+                        },
+                        "oAria": {
+                            "sSortAscending":  ": activer pour trier la colonne par ordre croissant",
+                            "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+                        }},
+                    //"scrollY": "50vh"//cause un bug avec datatable, seule la première table est transformée});
+            });});
+
+
+	</script>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

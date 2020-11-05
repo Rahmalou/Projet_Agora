@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>splendor</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/agoragamesplendor/css/index_style.css') }}">
+</head>
+
+<body>
+
+<script src="{{ asset('bundles/agoragamesplendor/script/vue.min.js') }}"></script>
+<script src="{{ asset('bundles/agoragamesplendor/script/components.js') }}"></script>
+{#<script src="{{ asset('bundles/agoragamesplendor/script/util.js') }}"></script>#}
+
+<img id="logo" src="{{ asset('bundles/agoragamesplendor/images/splendor.png') }}">
+<button id="quitButton" onclick="window.location.href = '{{ app.request.getSchemeAndHttpHost() }}'">Quit</button>
+
+<div class="nobles">
+    {% for noble in game.idNobles %}
+        <div id="box{{ noble }}"><img class="noble" src="{{ asset('bundles/agoragamesplendor/images/' ~ noble ~ '.png') }}" alt="NO"></div>
+    {% endfor %}
+</div>
+
+<div class="level">
+    <div class="label_III">
+        <img class="cardLevel" src="{{ asset('bundles/agoragamesplendor/images/cardLevel3.png') }}">
+        <button class="reserveButton" onclick="reserveRandomCard(3);">Reserve</button>
+    </div>
+
+    <div class="label_II">
+        <img class="cardLevel" src="{{ asset('bundles/agoragamesplendor/images/cardLevel2.png') }}">
+        <button class="reserveButton" onclick="reserveRandomCard(2);">Reserve</button>
+    </div>
+
+    <div class="label_I">
+        <img class="cardLevel" src="{{ asset('bundles/agoragamesplendor/images/cardLevel1.png') }}">
+        <button class="reserveButton" onclick="reserveRandomCard(1);">Reserve</button>
+    </div>
+</div>
+
+<!--
+    cards : Vue component for visible cards
+<cards class="cards"></cards>-->
+<div class="cards">
+    {% for card in game.idCards|reverse %}
+    <div id="box{{ card }}"><img class="card" src="{{ asset('bundles/agoragamesplendor/images/' ~ card ~ '.png') }}" alt="NO">
+            <button class="reserveButton" onclick="reserveCard({{ card }});">Reserve</button>
+            <button class="buyButton" onclick="buyCard({{ card }});">Buy</button>
+    </div>
+    {% endfor %}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+{#    <div class="box"><button>buy</button></div>#}
+</div>
+<!--<div id="cards">
+    <cards-component></cards-component>
+</div>-->
+
+<div class="tokens">
+    <div id="emerald" class="token"> {{ game.listTokens[0] }}</div>
+    <input id="nbEmerald" type="number" onkeydown="return false" min="0" max="{{ game.listTokens[0] }}" oninput="tokens();" value="0">
+    <div id="saphire" class="token"> {{ game.listTokens[1] }}</div>
+    <input id="nbSaphire" type="number" onkeydown="return false" min="0" max="{{ game.listTokens[1] }}" oninput="tokens();" value="0">
+    <div id="ruby" class="token"> {{ game.listTokens[2] }}</div>
+    <input id="nbRuby" type="number" onkeydown="return false" min="0" max="{{ game.listTokens[2] }}" oninput="tokens();" value="0">
+    <div id="diamond" class="token"> {{ game.listTokens[3] }}</div>
+    <input id="nbDiamond" type="number" onkeydown="return false" min="0" max="{{ game.listTokens[3] }}" oninput="tokens();" value="0">
+    <div id="onyx" class="token"> {{ game.listTokens[4] }}</div>
+    <input id="nbOnyx" type="number" onkeydown="return false" min="0" max="{{ game.listTokens[4] }}" oninput="tokens();" value="0">
+    <div id="gold" class="token"> {{ game.listTokens[5] }}</div>
+    <button id="getTokens" disabled="true" onclick="takeTokens();">Take</button>
+</div>
+
+<div class="players">
+    <!--1 div pour chaque joueur-->
+    {% for player in players %}
+
+        <div id="player{{ player.idUser.id }}" class="player">
+
+            <span> {{ player.idUser.username }}</span>
+            <span id="turn{{ player.idUser.id }}">
+            {% if player.idUser.id == game.idUserTurn %}
+                <p id="turn">Your turn !</p>
+            {% endif %}
+            </span>
+            <p id="prestige{{ player.idUser.id }}" class="prestige">Prestige: {{ player.prestige }}</p><br>
+            <!--<p>E, S, R, D, O, J</p>-->
+            <img class="tokensImages" src="{{ asset('bundles/agoragamesplendor/images/emerald.png') }}">
+            <img class="tokensImages" src="{{ asset('bundles/agoragamesplendor/images/saphire.png') }}">
+            <img class="tokensImages" src="{{ asset('bundles/agoragamesplendor/images/ruby.png') }}">
+            <img class="tokensImages" src="{{ asset('bundles/agoragamesplendor/images/diamond.png') }}">
+            <img class="tokensImages" src="{{ asset('bundles/agoragamesplendor/images/onyx.png') }}">
+            <img class="tokensImages" src="{{ asset('bundles/agoragamesplendor/images/gold.png') }}">
+
+            <p id="tokens{{ player.idUser.id }}" class="nbTokens">
+                {% for token in player.listTokens %}
+                    <span class="toks">{{ token }}</span>
+                {% endfor %}
+            </p>
+            Bought Cards: <br/>
+            <div id="buyedCard{{ player.idUser.id }}" class="divBuyedCards">
+                {% set nbE, nbS, nbR, nbD, nbO = 0,0,0,0,0 %}
+                {% for card in player.buyedCards %}
+                    {% if card != 0 %}
+                        {% if (card > 0 and card < 9) or (card > 40 and card < 47) or (card > 71 and card < 75) %}
+                            {% set nbE = nbE + 1 %}
+                        {% endif %}
+                        {% if (card > 8 and card < 17) or (card > 46 and card < 53) or (card > 74 and card < 79) %}
+                            {% set nbS = nbS + 1 %}
+                        {% endif %}
+                        {% if (card > 16 and card < 25) or (card > 52 and card < 59) or (card > 78 and card < 83) %}
+                            {% set nbR = nbR + 1 %}
+                        {% endif %}
+                        {% if (card > 24 and card < 33) or (card > 58 and card < 65) or (card > 82 and card < 87) %}
+                            {% set nbD = nbD + 1 %}
+                        {% endif %}
+                        {% if (card > 32 and card < 41) or (card > 64 and card < 71) or (card > 86 and card < 91) %}
+                            {% set nbO = nbO + 1 %}
+                        {% endif %}
+{#                        <div>#}
+{#                        <img class="buyedCards" src="{{ asset('bundles/agoragamesplendor/images/' ~ card ~ '.png') }}" alt="NO">#}
+{#                        </div>#}
+                    {% endif %}
+                {% endfor %}
+                <img class="buyedCards" src="{{ asset('bundles/agoragamesplendor/images/emeraude.png') }}" alt="NO">
+                <span id="emeraldBonus{{ player.idUser.id }}">{{ nbE }}</span><br>
+                <img class="buyedCards" src="{{ asset('bundles/agoragamesplendor/images/saphir.png') }}" alt="NO">
+                <span id="saphireBonus{{ player.idUser.id }}">{{ nbS }}</span><br>
+                <img class="buyedCards" src="{{ asset('bundles/agoragamesplendor/images/rubyy.png') }}" alt="NO">
+                <span id="rubyBonus{{ player.idUser.id }}">{{ nbR }}</span><br>
+                <img class="buyedCards" src="{{ asset('bundles/agoragamesplendor/images/diamant.png') }}" alt="NO">
+                <span id="diamondBonus{{ player.idUser.id }}">{{ nbD }}</span><br>
+                <img class="buyedCards" src="{{ asset('bundles/agoragamesplendor/images/onyxx.png') }}" alt="NO">
+                <span id="onyxBonus{{ player.idUser.id }}">{{ nbO }}</span>
+            </div>
+            <br>Reserved Cards: <span id="nbReserv{{ player.idUser.id }}">{{ player.reservedCards|length - 1 }}</span><br>
+            <div id="reservedCard{{ player.idUser.id }}" class="divReservedCards">
+                {% for card in player.reservedCards %}
+                    {% if card != 0 %}
+                        {% if player.idUser.id == user.id %}
+                        <div id="reserv{{ card }}">
+                            <img class="reservedCards" src="{{ asset('bundles/agoragamesplendor/images/' ~ card ~ '.png') }}" alt="NO">
+                            {% if player.idUser.id == user.id %}
+                            <button id="buyPlayer" class="buyButton" onclick="buyCard({{ card }});">Buy</button>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                            {% if card <= 40 %}
+                                {% set lvl = 1 %}
+                            {% elseif card <= 70 %}
+                                {% set lvl = 2 %}
+                            {% else %}
+                                {% set lvl = 3 %}
+                            {% endif %}
+                            <div id="reserv{{ card }}" class="imgPlusBtn">
+                                <img class="reservedCardss" src="{{ asset('bundles/agoragamesplendor/images/cardLevel' ~ lvl ~ '.png') }}" alt="NO">
+                            </div>
+
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>
+
+<script>
+    //On retrouve l'url de base du serveur à la barbare
+    var urlSock = "{{ app.request.getSchemeAndHttpHost() }}";
+    //On enlève le http (ou https)
+    urlSock = urlSock.split("/");
+    urlSock = urlSock[2];
+    //On enlève le port
+    urlSock = urlSock.split(":");
+    urlSock = urlSock[0];
+
+    var connection = new WebSocket('ws://'+ urlSock +':8089');
+
+    connection.onopen = function(e) {
+
+    };
+
+    connection.onclose = function(e) {
+
+    };
+
+    connection.onmessage = function(e) {
+        console.log("splendor test : " + e.data);
+        let content = JSON.parse(e.data);
+        switch (content.type) {
+            case "takeTokens":
+                let printedPlayerTokens = document.getElementById('tokens' + content.userId);
+                let printedEmerald = document.getElementById('emerald');
+                let printedSaphire = document.getElementById('saphire');
+                let printedRuby = document.getElementById('ruby');
+                let printedDiamond = document.getElementById('diamond');
+                let printedOnyx = document.getElementById('onyx');
+                let str = content.tokensPlayer;
+                let tab = str.split(",");
+                for (let i = 0; i < tab.length; i++) {
+                    printedPlayerTokens.children[i].innerHTML = tab[i];
+                }
+                let tabTokens = content.tokensGame.split(",");
+                printedEmerald.innerHTML = tabTokens[0];
+                printedSaphire.innerHTML = tabTokens[1];
+                printedRuby.innerHTML = tabTokens[2];
+                printedDiamond.innerHTML = tabTokens[3];
+                printedOnyx.innerHTML = tabTokens[4];
+                resetTokensNbValues();
+                if (content.userId == {{ user.id }}) {
+                    canVisitNoble();
+                }
+                break;
+            case "reserveCard":
+                let printedPlayerReservedCards = document.getElementById('reservedCard' + content.userId);
+                let printedGameCard = document.getElementById('box' + content.oldCard);
+                {#let btn = "";#}
+                {#if (content.userId == {{ user.id }}) {#}
+                {#    btn = "<button class=\"buyButton\" onclick=\"buyCard("+ content.oldCard +");\">Buy</button></div>"#}
+                {#}#}
+                {#var url = '{{ asset("bundles/agoragamesplendor/images/id.png") }}';#}
+                {#url = url.replace('id', content.oldCard);#}
+                {#printedPlayerReservedCards.innerHTML += "<div id=\"reserv" + content.oldCard + "\"><img class=\"reservedCards\" src=\"" + url#}
+                {#    + "\" alt=\"NO\">\n" + btn;#}
+                if (content.userId == {{ user.id }}) {
+                    var url = '{{ asset("bundles/agoragamesplendor/images/id.png") }}';
+                    url = url.replace('id', content.oldCard);
+                    printedPlayerReservedCards.innerHTML += "<div id=\"reserv" + content.oldCard + "\"><img class=\"reservedCards\" src=\"" + url
+                        + "\" alt=\"NO\">\n <button id=\"buyPlayer\" class=\"buyButton\" onclick=\"buyCard(" + content.oldCard + ");\">Buy</button></div>";
+                } else {
+                    let lvl = 3;
+                    if (content.oldCard <= 40) {
+                        lvl = 1;
+                    } else if (content.oldCard <= 70) {
+                        lvl = 2
+                    }
+                    var url = '{{ asset("bundles/agoragamesplendor/images/cardLevellvl.png") }}';
+                    url = url.replace('lvl', lvl);
+                    printedPlayerReservedCards.innerHTML += "<div id=\"reserv" + content.oldCard + "\" class=\"imgPlusBtn\"><img class=\"reservedCardss\" src=\"" + url
+                        + "\" alt=\"NO\">"
+                }
+                printedGameCard.id = 'box' + content.newCard;
+                var url2 = '{{ asset("bundles/agoragamesplendor/images/id.png") }}';
+                url2 = url2.replace('id', content.newCard);
+                printedGameCard.innerHTML = "<img class=\"card\" src=\"" + url2 + "\" alt=\"NO\">\n"
+                               + "<button class=\"reserveButton\" onclick=\"reserveCard(" + content.newCard + ");\">Reserve</button>\n"
+                               + "<button id=\"buyPlayer\" class=\"buyButton\" onclick=\"buyCard("+ content.newCard +");\">Buy</button>";
+                if (content.joker == 1) {
+                    let printedGold = document.getElementById('gold');
+                    let nb = parseInt(printedGold.innerHTML);
+                    printedGold.innerHTML = (nb - 1);
+                    let printedPlayerTokens = document.getElementById('tokens' + content.userId);
+                    let values = printedPlayerTokens.innerText.split(" ");
+                    values[5] = ""+(parseInt(values[5]) + 1);
+                    printedPlayerTokens.children[5].innerHTML = values[5];
+                }
+                if (content.userId == {{ user.id }}) {
+                    canVisitNoble();
+                }
+                let nbReserv = document.getElementById('nbReserv' + content.userId);
+                nbReserv.innerText = parseInt(nbReserv.innerText) + 1;
+
+                break;
+            case "buyCard":
+                let emerald = document.getElementById('emerald');
+                let saphire = document.getElementById('saphire');
+                let ruby = document.getElementById('ruby');
+                let diamond = document.getElementById('diamond');
+                let onyx = document.getElementById('onyx');
+                let gold = document.getElementById('gold');
+                let tabTok = content.gameTokens.split(",");
+                emerald.innerHTML = tabTok[0];
+                saphire.innerHTML = tabTok[1];
+                ruby.innerHTML = tabTok[2];
+                diamond.innerHTML = tabTok[3];
+                onyx.innerHTML = tabTok[4];
+                gold.innerHTML = tabTok[5];
+                {#let printedPlayerBuyedCards = document.getElementById('buyedCard' + content.userId);#}
+                {#var url = '{{ asset("bundles/agoragamesplendor/images/id.png") }}';#}
+                {#url = url.replace('id', content.oldCard);#}
+                {#printedPlayerBuyedCards.innerHTML += "<div><img class=\"buyedCards\" src=\"" + url + "\" alt=\"NO\"><div>";#}
+                let card = content.oldCard;
+                if ((card > 0 && card < 9) || (card > 40 && card < 47) || (card > 71 && card < 75)) {
+                    let elmt = document.getElementById('emeraldBonus' + content.userId);
+                    let nb = parseInt(elmt.innerText) + 1;
+                    elmt.innerText = '' + nb;
+                }
+                else if ((card > 8 && card < 17) || (card > 46 && card < 53) || (card > 74 && card < 79)) {
+                    let elmt = document.getElementById('saphireBonus' + content.userId);
+                    let nb = parseInt(elmt.innerText) + 1;
+                    elmt.innerText = '' + nb;
+                }
+                else if ((card > 16 && card < 25) || (card > 52 && card < 59) || (card > 78 && card < 83)) {
+                    let elmt = document.getElementById('rubyBonus' + content.userId);
+                    let nb = parseInt(elmt.innerText) + 1;
+                    elmt.innerText = '' + nb;
+                }
+                else if ((card > 24 && card < 33) || (card > 58 && card < 65) || (card > 82 && card < 87)) {
+                    let elmt = document.getElementById('diamondBonus' + content.userId);
+                    let nb = parseInt(elmt.innerText) + 1;
+                    elmt.innerText = '' + nb;
+                }
+                else if ((card > 32 && card < 41) || (card > 64 && card < 71) || (card > 86 && card < 91)) {
+                    let elmt = document.getElementById('onyxBonus' + content.userId);
+                    let nb = parseInt(elmt.innerText) + 1;
+                    elmt.innerText = '' + nb;
+                }
+
+                let prestige = document.getElementById('prestige' + content.userId);
+                prestige.innerHTML = "Prestige: " + content.prestige;
+                if (content.newCard == null) {
+                    let reservCard = document.getElementById('reserv' + content.oldCard);
+                    reservCard.parentNode.removeChild(reservCard);
+                } else {
+                    let printedGameCard = document.getElementById('box' + content.oldCard);
+                    printedGameCard.id = 'box' + content.newCard;
+                    var url2 = '{{ asset("bundles/agoragamesplendor/images/id.png") }}';
+                    url2 = url2.replace('id', content.newCard);
+                    printedGameCard.innerHTML = "<img class=\"card\" src=\"" + url2 + "\" alt=\"NO\">\n"
+                        + "<button class=\"reserveButton\" onclick=\"reserveCard(" + content.newCard + ");\">Reserve</button>\n"
+                        + "<button class=\"buyButton\" onclick=\"buyCard("+ content.newCard +");\">Buy</button>";
+                }
+                let playerTokens = document.getElementById('tokens' + content.userId);
+                let tabb = content.tokens.split(",");
+                for (let i = 0; i < tabb.length; i++) {
+                    playerTokens.children[i].innerHTML = tabb[i];
+                }
+                // playerTokens.innerHTML = content.tokens.replace(/,/g, "    ");
+                if (content.userId == {{ user.id }}) {
+                    canVisitNoble();
+                }
+                break;
+            case "reserveRandomCard":
+                let printedReservedPlayerCards = document.getElementById('reservedCard' + content.userId);
+                if (content.userId == {{ user.id }}) {
+                    var url = '{{ asset("bundles/agoragamesplendor/images/id.png") }}';
+                    url = url.replace('id', content.oldCard);
+                    printedReservedPlayerCards.innerHTML += "<div id=\"reserv" + content.oldCard + "\"><img class=\"reservedCards\" src=\"" + url
+                        + "\" alt=\"NO\">\n <button id=\"buyPlayer\" class=\"buyButton\" onclick=\"buyCard(" + content.oldCard + ");\">Buy</button></div>";
+                } else {
+                    let lvl = 3;
+                    if (content.oldCard <= 40) {
+                        lvl = 1;
+                    } else if (content.oldCard <= 70) {
+                        lvl = 2
+                    }
+                    var url = '{{ asset("bundles/agoragamesplendor/images/cardLevellvl.png") }}';
+                    url = url.replace('lvl', lvl);
+                    printedReservedPlayerCards.innerHTML += "<div id=\"reserv" + content.oldCard + "\" class=\"imgPlusBtn\"><img class=\"reservedCardss\" src=\"" + url
+                        + "\" alt=\"NO\">"
+                }
+                if (content.joker == 1) {
+                    let printedGold = document.getElementById('gold');
+                    let nb = parseInt(printedGold.innerHTML);
+                    printedGold.innerHTML = parseInt(nb - 1);
+                    let printedPlayerTokens = document.getElementById('tokens' + content.userId);
+                    let values = printedPlayerTokens.innerText.split(" ");
+                    console.log(values[5]);
+                    values[5] = ""+(parseInt(values[5]) + 1);
+                    printedPlayerTokens.children[5].innerHTML = values[5];
+                }
+                if (content.userId == {{ user.id }}) {
+                    canVisitNoble();
+                }
+                let nbReserve = document.getElementById('nbReserv' + content.userId);
+                nbReserve.innerText = parseInt(nbReserve.innerText) + 1;
+                break;
+            case "canVisitNoble":
+                let nobles = content.nobles.split(",");
+                let printedNoble = [];
+                for (let id of nobles) {
+                    printedNoble.push(document.getElementById('box' + id));
+                }
+                let k = 0;
+                for (let printed of printedNoble) {
+                    var wrap = document.createElement("a");
+                    wrap.href = "#";
+                    wrap.setAttribute("onclick", "visitNoble(" + nobles[k] + ");");
+                    wrap.setAttribute("class", "linkNoble");
+                    var target = printed.childNodes[0];
+                    printed.replaceChild(wrap, target);
+                    wrap.appendChild(target);
+                    //Trouver un moyen de prevenir le joueur + de lui montrer les nobles possibles !!!
+                    printed.children[0].children[0].style.border = "solid 3px red";
+                    k++;
+                }
+                break;
+            case "visitNoble":
+                let noble = document.getElementById('box' + content.nobleId);
+                noble.parentNode.removeChild(noble);
+                let prest = document.getElementById('prestige' + content.userId);
+                prest.innerHTML = "Prestige : " + content.prestige;
+                let nob = document.getElementsByClassName('nobles')[0].childNodes;
+                for (let n of nob) {
+                    if (n != undefined && n.children != undefined && n.children[0] != undefined) {
+                        n.children[0].style.removeProperty("border");
+                    }
+                }
+                if (content.userId == {{ user.id }}) {
+                    endTurn();
+                }
+                break;
+            case "endTurn":
+                let turn = document.getElementById('turn');
+                let playerTurn = document.getElementById('turn' + content.next);
+                turn.parentNode.removeChild(turn);
+                playerTurn.appendChild(turn);
+                break;
+            case "moreTenToken":
+                let toks = content.tokens.split(",");
+                let sum = content.total;
+                let popup = open("",'popup','width=400,height=500,toolbar=no,scrollbars=no,resizable=yes');
+                popup.document.write("<p> Vous avez plus de 10 jetons !</p>");
+                popup.document.write("<img src=\"{{ asset('bundles/agoragamesplendor/images/emerald.png') }}\" width=\"50\" height=\"50\"> <span id=\"emerald\">"
+                    + toks[0] + "</span> <button id=\"moinsE\">-</button> <button id=\"plusE\">+</button><br>");
+                popup.document.write("<img src=\"{{ asset('bundles/agoragamesplendor/images/saphire.png') }}\" width=\"50\" height=\"50\"> <span id=\"saphire\">"
+                    + toks[1] + "</span> <button id=\"moinsS\">-</button> <button id=\"plusS\">+</button><br>");
+                popup.document.write("<img src=\"{{ asset('bundles/agoragamesplendor/images/ruby.png') }}\" width=\"50\" height=\"50\"> <span id=\"ruby\">"
+                    + toks[2] + "</span> <button id=\"moinsR\">-</button> <button id=\"plusR\">+</button><br>");
+                popup.document.write("<img src=\"{{ asset('bundles/agoragamesplendor/images/diamond.png') }}\" width=\"50\" height=\"50\"> <span id=\"diamond\">"
+                    + toks[3] + "</span> <button id=\"moinsD\">-</button> <button id=\"plusD\">+</button><br>");
+                popup.document.write("<img src=\"{{ asset('bundles/agoragamesplendor/images/onyx.png') }}\" width=\"50\" height=\"50\"> <span id=\"onyx\">"
+                    + toks[4] + "</span> <button id=\"moinsO\">-</button> <button id=\"plusO\">+</button><br>");
+                popup.document.write("<img src=\"{{ asset('bundles/agoragamesplendor/images/gold.png') }}\" width=\"50\" height=\"50\"> <span id=\"gold\">"
+                    + toks[5] + "</span> <button id=\"moinsG\">-</button> <button id=\"plusG\">+</button><br>");
+                popup.document.write("<p id='sum'>Nombre de jetons : " + sum + "</p><button disabled id=\"submit\">Valider</button>");
+                popup.document.write("<script> let nbE = " + toks[0] + "; let nbS = " + toks[1] + ";");
+                popup.document.write("let nbR = " + toks[2] + "; let nbD = " + toks[3] + ";");
+                popup.document.write("let nbO = " + toks[4] + "; let nbG = " + toks[5] + "; let sum = " + sum + ";");
+                popup.document.write("let maxE = " + toks[0] + "; let maxS = " + toks[1] + ";");
+                popup.document.write("let maxR = " + toks[2] + "; let maxD = " + toks[3] + ";");
+                popup.document.write("let maxO = " + toks[4] + "; let maxG = " + toks[5] + ";");
+                popup.document.write("let btmE = document.getElementById('moinsE'); let btpE = document.getElementById('plusE');");
+                popup.document.write("let btmS = document.getElementById('moinsS'); let btpS = document.getElementById('plusS');");
+                popup.document.write("let btmR = document.getElementById('moinsR'); let btpR = document.getElementById('plusR');");
+                popup.document.write("let btmD = document.getElementById('moinsD'); let btpD = document.getElementById('plusD');");
+                popup.document.write("let btmO = document.getElementById('moinsO'); let btpO = document.getElementById('plusO');");
+                popup.document.write("let btmG = document.getElementById('moinsG'); let btpG = document.getElementById('plusG');");
+                popup.document.write("let submit = document.getElementById('submit');");
+                popup.document.write("btmE.onclick = function() { if (sum > 10 && nbE > 0) { sum--; nbE--; document.getElementById('emerald').innerHTML = ''+nbE;" +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btpE.onclick = function() { if (nbE < maxE) { sum++; nbE++; document.getElementById('emerald').innerHTML = ''+nbE;" +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btmS.onclick = function() { if (sum > 10 && nbS > 0) { sum--; nbS--; document.getElementById('saphire').innerHTML = ''+nbS;" +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btpS.onclick = function() { if (nbS < maxS) { sum++; nbS++; document.getElementById('saphire').innerHTML = ''+nbS;" +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btmR.onclick = function() { if (sum > 10 && nbR > 0) { sum--; nbR--; document.getElementById('ruby').innerHTML = ''+nbR;" +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btpR.onclick = function() { if (nbR < maxR) { sum++; nbR++; document.getElementById('ruby').innerHTML = ''+nbR;" +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btmD.onclick = function() { if (sum > 10 && nbD > 0) { sum--; nbD--; document.getElementById('diamond').innerHTML = ''+nbD;" +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btpD.onclick = function() { if (nbD < maxD) { sum++; nbD++; document.getElementById('diamond').innerHTML = ''+nbD; " +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btmO.onclick = function() { if (sum > 10 && nbO > 0) { sum--; nbO--; document.getElementById('onyx').innerHTML = ''+nbO; " +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btpO.onclick = function() { if (nbO < maxO) { sum++; nbO++; document.getElementById('onyx').innerHTML = ''+nbO; " +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btmG.onclick = function() { if (sum > 10 && nbG > 0) { sum--; nbG--; document.getElementById('gold').innerHTML = ''+nbG;" +
+                    "document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("btpG.onclick = function() { if (nbG < maxG) { sum++; nbG++; document.getElementById('gold').innerHTML = ''+nbG;" +
+                    " document.getElementById('sum').innerHTML = 'Nombre de jetons : '+sum; } if (sum == 10) { submit.disabled = false; } else { submit.disabled = true; } };");
+                popup.document.write("submit.onclick = function() { close(); } <\/script>");
+                popup.onbeforeunload = function() {
+                    let t = [];
+                    t[0] = parseInt(popup.document.getElementById('emerald').innerHTML);
+                    t[1] = parseInt(popup.document.getElementById('saphire').innerHTML);
+                    t[2] = parseInt(popup.document.getElementById('ruby').innerHTML);
+                    t[3] = parseInt(popup.document.getElementById('diamond').innerHTML);
+                    t[4] = parseInt(popup.document.getElementById('onyx').innerHTML);
+                    t[5] = parseInt(popup.document.getElementById('gold').innerHTML);
+                    var content = {
+                        type: 'removeTokens',
+                        gameId: {{ game.id }},
+                        userId: {{ user.id }} ,
+                        tokens: t.join(",")
+                    };
+                    console.log("splendor send : " + JSON.stringify(content));
+                    connection.send(JSON.stringify(content));
+                };
+                break;
+            case "removeTokens":
+                let printedPlayerTok = document.getElementById('tokens' + content.userId);
+                let tabbb = content.tokens.split(",");
+                for (let i = 0; i < tabbb.length; i++) {
+                    printedPlayerTok.children[i].innerHTML = tabbb[i];
+                }
+                // printedPlayerTok.innerHTML = content.tokens.replace(/,/g, "   ");
+                if (content.userId == {{ user.id }}) {
+                    endTurn();
+                }
+                break;
+            case "gameWin":
+                //PARTIE GAGNEE
+                alert(content.winner + " a gagné la partie !");
+                window.location.href = '{{ app.request.getSchemeAndHttpHost() }}';
+                break;
+        }
+
+    };
+
+    function endTurn() {
+        var content = {
+            type: "endTurn",
+            gameId: {{ game.id }},
+            userId: {{ user.id }},
+        };
+        console.log("splendor send : " + JSON.stringify(content));
+        connection.send(JSON.stringify(content));
+    }
+
+    function  visitNoble(id) {
+        let printedNoble = document.getElementsByClassName("linkNoble");
+        console.log('nobles : ' + printedNoble.length);
+        while (printedNoble.length > 0) {
+            var img = printedNoble[0].childNodes[0];
+            printedNoble[0].parentNode.replaceChild(img, printedNoble[0]);
+        }
+        var content = {
+            type: "visitNoble",
+            gameId: {{ game.id }},
+            userId: {{ user.id }},
+            nobleId: id
+        };
+        console.log("splendor send : " + JSON.stringify(content));
+        connection.send(JSON.stringify(content));
+    }
+
+    function canVisitNoble() {
+        var content = {
+            type: "canVisitNoble",
+            gameId: {{ game.id }},
+            userId: {{ user.id }},
+        };
+        console.log("splendor send : " + JSON.stringify(content));
+        connection.send(JSON.stringify(content));
+    }
+
+    function buyCard(id) {
+        if (window.confirm("Etes vous sûr de vouloir acheter cette carte ?")) {
+            var content = {
+                type: "buyCard",
+                gameId: {{ game.id }},
+                userId: {{ user.id }},
+                cardId: id
+            };
+            console.log("splendor send : " + JSON.stringify(content));
+            connection.send(JSON.stringify(content));
+        }
+    }
+
+    function reserveCard(id) {
+        if (window.confirm("Etes vous sûr de vouloir reserver cette carte ?")) {
+
+            var content = {
+                type: "reserveCard",
+                gameId: {{ game.id }},
+                userId: {{ user.id }},
+                cardId: id
+            };
+            console.log("splendor send : " + JSON.stringify(content));
+            connection.send(JSON.stringify(content));
+        }
+    }
+
+    function reserveRandomCard(level) {
+        if (window.confirm("Etes vous sûr de vouloir reserver cette carte ?")) {
+
+            var content = {
+                type: "reserveRandomCard",
+                gameId: {{ game.id }},
+                userId: {{ user.id }},
+                level: level
+            };
+            console.log("splendor send : " + JSON.stringify(content));
+            connection.send(JSON.stringify(content));
+        }
+    }
+
+    function takeTokens() {
+        let toks = document.getElementById('nbEmerald').value + ","
+        + document.getElementById('nbSaphire').value + ","
+        + document.getElementById('nbRuby').value + ","
+        + document.getElementById('nbDiamond').value + ","
+        + document.getElementById('nbOnyx').value;
+
+        var content = {
+            type: "takeTokens",
+            gameId: {{ game.id }},
+            userId: {{ user.id }},
+            tokens: toks
+        };
+        console.log("splendor send : " + content);
+        connection.send(JSON.stringify(content));
+    }
+
+    function resetTokensNbValues() {
+        let emerald = document.getElementById('nbEmerald');
+        let saphire = document.getElementById('nbSaphire');
+        let ruby = document.getElementById('nbRuby');
+        let diamond = document.getElementById('nbDiamond');
+        let onyx = document.getElementById('nbOnyx');
+        let take = document.getElementById('getTokens');
+        emerald.value = 0;
+        saphire.value = 0;
+        ruby.value = 0;
+        diamond.value = 0;
+        onyx.value = 0;
+        emerald.disabled = false;
+        saphire.disabled = false;
+        ruby.disabled = false;
+        diamond.disabled = false;
+        onyx.disabled = false;
+        take.disabled = true;
+        emerald.max = {{ game.listTokens[0] }};
+        saphire.max = {{ game.listTokens[1] }};
+        ruby.max = {{ game.listTokens[2] }};
+        diamond.max = {{ game.listTokens[3] }};
+        onyx.max = {{ game.listTokens[4] }};
+    }
+
+    function tokens() {
+        let tok = [];
+        tok[0] = {{ game.listTokens[0] }};
+        tok[1] = {{ game.listTokens[1] }};
+        tok[2] = {{ game.listTokens[2] }};
+        tok[3] = {{ game.listTokens[3] }};
+        tok[4] = {{ game.listTokens[4] }};
+        let emerald = document.getElementById('nbEmerald');
+        let saphire = document.getElementById('nbSaphire');
+        let ruby = document.getElementById('nbRuby');
+        let diamond = document.getElementById('nbDiamond');
+        let onyx = document.getElementById('nbOnyx');
+        let take = document.getElementById('getTokens');
+        let sum = parseInt(emerald.value) + parseInt(saphire.value) + parseInt(ruby.value)
+            + parseInt(diamond.value) + parseInt(onyx.value);
+        if (emerald.value == 1 && sum - parseInt(emerald.value) > 0) {
+            if (sum == 3) {
+                if (saphire.value == 0) {
+                    saphire.disabled = true;
+                }
+                if (ruby.value == 0) {
+                    ruby.disabled = true;
+                }
+                if (diamond.value == 0) {
+                    diamond.disabled = true;
+                }
+                if (onyx.value == 0) {
+                    onyx.disabled = true;
+                }
+                take.disabled = false;
+            } else {
+                saphire.disabled = false;
+                ruby.disabled = false;
+                diamond.disabled = false;
+                emerald.disabled = false;
+                onyx.disabled = false;
+                take.disabled = true;
+            }
+            (tok[1] >= 1) ? saphire.max = 1 : saphire.max = tok;
+            (tok[2] >= 1) ? ruby.max = 1 : ruby.max = tok;
+            (tok[0] >= 1) ? emerald.max = 1 : emerald.max = tok;
+            (tok[3] >= 1) ? diamond.max = 1 : diamond.max = tok;
+            (tok[4] >= 1) ? onyx.max = 1 : onyx.max = tok;
+            return;
+        }
+        if (saphire.value == 1 && sum - parseInt(saphire.value) > 0) {
+            if (sum == 3) {
+                if (emerald.value == 0) {
+                    emerald.disabled = true;
+                }
+                if (ruby.value == 0) {
+                    ruby.disabled = true;
+                }
+                if (diamond.value == 0) {
+                    diamond.disabled = true;
+                }
+                if (onyx.value == 0) {
+                    onyx.disabled = true;
+                }
+                take.disabled = false;
+            } else {
+                saphire.disabled = false;
+                ruby.disabled = false;
+                diamond.disabled = false;
+                emerald.disabled = false;
+                onyx.disabled = false;
+                take.disabled = true;
+            }
+            (tok[1] >= 1) ? saphire.max = 1 : saphire.max = tok;
+            (tok[2] >= 1) ? ruby.max = 1 : ruby.max = tok;
+            (tok[0] >= 1) ? emerald.max = 1 : emerald.max = tok;
+            (tok[3] >= 1) ? diamond.max = 1 : diamond.max = tok;
+            (tok[4] >= 1) ? onyx.max = 1 : onyx.max = tok;
+            return;
+        }
+        if (ruby.value == 1 && sum - parseInt(ruby.value) > 0) {
+            if (sum == 3) {
+                if (saphire.value == 0) {
+                    saphire.disabled = true;
+                }
+                if (emerald.value == 0) {
+                    emerald.disabled = true;
+                }
+                if (diamond.value == 0) {
+                    diamond.disabled = true;
+                }
+                if (onyx.value == 0) {
+                    onyx.disabled = true;
+                }
+                take.disabled = false;
+            } else {
+                saphire.disabled = false;
+                ruby.disabled = false;
+                diamond.disabled = false;
+                emerald.disabled = false;
+                onyx.disabled = false;
+                take.disabled = true;
+            }
+            (tok[1] >= 1) ? saphire.max = 1 : saphire.max = tok;
+            (tok[2] >= 1) ? ruby.max = 1 : ruby.max = tok;
+            (tok[0] >= 1) ? emerald.max = 1 : emerald.max = tok;
+            (tok[3] >= 1) ? diamond.max = 1 : diamond.max = tok;
+            (tok[4] >= 1) ? onyx.max = 1 : onyx.max = tok;
+            return;
+        }
+        if (diamond.value == 1 && sum - parseInt(diamond.value) > 0) {
+            if (sum == 3) {
+                if (saphire.value == 0) {
+                    saphire.disabled = true;
+                }
+                if (ruby.value == 0) {
+                    ruby.disabled = true;
+                }
+                if (emerald.value == 0) {
+                    emerald.disabled = true;
+                }
+                if (onyx.value == 0) {
+                    onyx.disabled = true;
+                }
+                take.disabled = false;
+            } else {
+                saphire.disabled = false;
+                ruby.disabled = false;
+                diamond.disabled = false;
+                emerald.disabled = false;
+                onyx.disabled = false;
+                take.disabled = true;
+            }
+            (tok[1] >= 1) ? saphire.max = 1 : saphire.max = tok;
+            (tok[2] >= 1) ? ruby.max = 1 : ruby.max = tok;
+            (tok[0] >= 1) ? emerald.max = 1 : emerald.max = tok;
+            (tok[3] >= 1) ? diamond.max = 1 : diamond.max = tok;
+            (tok[4] >= 1) ? onyx.max = 1 : onyx.max = tok;
+            return;
+        }
+        if (onyx.value == 1 && sum - parseInt(onyx.value) > 0) {
+            if (sum == 3) {
+                if (saphire.value == 0) {
+                    saphire.disabled = true;
+                }
+                if (ruby.value == 0) {
+                    ruby.disabled = true;
+                }
+                if (diamond.value == 0) {
+                    diamond.disabled = true;
+                }
+                if (emerald.value == 0) {
+                    emerald.disabled = true;
+                }
+                take.disabled = false;
+            } else {
+                saphire.disabled = false;
+                ruby.disabled = false;
+                diamond.disabled = false;
+                emerald.disabled = false;
+                onyx.disabled = false;
+                take.disabled = true;
+            }
+            (tok[1] >= 1) ? saphire.max = 1 : saphire.max = tok;
+            (tok[2] >= 1) ? ruby.max = 1 : ruby.max = tok;
+            (tok[0] >= 1) ? emerald.max = 1 : emerald.max = tok;
+            (tok[3] >= 1) ? diamond.max = 1 : diamond.max = tok;
+            (tok[4] >= 1) ? onyx.max = 1 : onyx.max = tok;
+            return;
+        }
+        if (emerald.value == 2) {
+            if (tok[0] < 4)  {
+                emerald.value = 1;
+                emerald.max = 1;
+            } else {
+                saphire.disabled = true;
+                ruby.disabled = true;
+                diamond.disabled = true;
+                onyx.disabled = true;
+                emerald.max = 2;
+                take.disabled = false;
+            }
+            return;
+        }
+        if (saphire.value == 2) {
+            if (tok[1] < 4)  {
+                saphire.value = 1;
+                saphire.max = 1;
+            } else {
+                emerald.disabled = true;
+                ruby.disabled = true;
+                diamond.disabled = true;
+                onyx.disabled = true;
+                saphire.max = 2;
+                take.disabled = false;
+            }
+            return;
+        }
+        if (ruby.value == 2) {
+            if (tok[2] < 4)  {
+                ruby.value = 1;
+                ruby.max = 1;
+            } else {
+                saphire.disabled = true;
+                emerald.disabled = true;
+                diamond.disabled = true;
+                onyx.disabled = true;
+                take.disabled = false;
+                ruby.max = 2;
+            }
+            return;
+        }
+        if (diamond.value == 2) {
+            if (tok[3] < 4)  {
+                diamond.value = 1;
+                diamond.max = 1;
+            } else {
+                saphire.disabled = true;
+                ruby.disabled = true;
+                emerald.disabled = true;
+                onyx.disabled = true;
+                take.disabled = false;
+                diamond.max = 2;
+            }
+            return;
+        }
+        if (onyx.value == 2) {
+            if (tok[4] < 4)  {
+                onyx.value = 1;
+                onyx.max = 1;
+            } else {
+                saphire.disabled = true;
+                ruby.disabled = true;
+                diamond.disabled = true;
+                emerald.disabled = true;
+                take.disabled = false;
+                onyx.max = 2;
+            }
+            return;
+        }
+        saphire.disabled = false;
+        ruby.disabled = false;
+        diamond.disabled = false;
+        emerald.disabled = false;
+        onyx.disabled = false;
+        take.disabled = true;
+        emerald.max = {{ game.listTokens[0] }};
+        saphire.max = {{ game.listTokens[1] }};
+        ruby.max = {{ game.listTokens[2] }};
+        diamond.max = {{ game.listTokens[3] }};
+        onyx.max = {{ game.listTokens[4] }};
+
+    }
+
+    resetTokensNbValues();
+</script>

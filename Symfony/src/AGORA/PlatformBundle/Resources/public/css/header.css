@@ -1,0 +1,15 @@
+/*AGORA/PlatformBundle/Resources/public/css*/
+
+header {
+    width: 100%;
+    height: 160px;
+    background: url("../image/bg.jpg") fixed;
+    background-position: top;
+}
+
+
+
+header h1 {
+    padding: 2em;
+    margin-top: 0px;
+}

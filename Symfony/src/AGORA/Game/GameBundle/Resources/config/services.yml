@@ -1,0 +1,4 @@
+services:
+#    agora_game_game.example:
+#        class: AGORA\SQPGame\GameBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

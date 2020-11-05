@@ -1,0 +1,4 @@
+services:
+    agora_game.ave_cesar:
+        class: AGORA\Game\AveCesarBundle\Service\AveCesarService
+        arguments: ["@doctrine.orm.entity_manager"]

@@ -1,0 +1,23 @@
+{% extends "AGORAPlatformBundle::layout.html.twig" %}
+{% block title %}{{ parent() }} - liste des classements {% endblock %}
+
+{% block header %}
+    <h1>Liste des classement</h1>
+{% endblock %}
+
+{% block content %}
+<ul class="liste">
+
+  {% for game in gameList %}
+
+    <li>
+    <img class="imgJeu" src="{{asset('bundles/agoraplatform/image/availableGame/' ~ game.imageURL) }}" alt="pas encore là"/>
+    {{ game.nom }}<br><br>
+    nombre joueurs {{ game.minJoueurs }} - {{ game.maxJoueurs }} 
+    <button class="buttonMore" onclick="window.location.href='leaderboard/{{ game.id }}'">Voir le classement</button>
+    </li>
+
+  {% endfor %}
+
+</ul>
+{% endblock %}

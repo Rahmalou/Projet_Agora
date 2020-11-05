@@ -1,0 +1,11 @@
+agora_game_create_sqp:
+    path: /create
+    defaults: { _controller: AGORAGameSQPBundle:Default:createLobby }
+
+agora_game_join_sqp:
+    path: /join/{idGame}
+    defaults: { _controller: AGORAGameSQPBundle:Default:joinLobby, idGame: "1" }
+
+agora_game_delete_sqp:
+    path: /delete/{idGame}
+    defaults: { _controller: AGORAGameSQPBundle:Default:delete, idGame: "1" }

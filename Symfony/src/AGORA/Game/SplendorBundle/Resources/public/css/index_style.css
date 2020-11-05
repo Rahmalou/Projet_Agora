@@ -1,0 +1,310 @@
+body {
+    background-image: url("../images/fondSplendor.jpg");
+    background-size: 100%;
+}
+
+#logo {
+    height: 80px;
+    width: 300px;
+    margin-top: 0px;
+}
+
+.nobles {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(5, 110px);
+    grid-template-rows: repeat(1, 110px);
+    position: relative;
+    top: -20px;
+    left: 320px;
+}
+
+.noble {
+    width: 110px;
+    height: 110px;
+    border-radius: 10px;
+}
+
+.level {
+    position: relative;
+    /*left: 21%;*/
+    left: 320px;
+    top: -14px;
+    width: 110px;
+    display: grid;
+    grid-row-gap: 36px;
+    grid-template-columns: repeat(1, 110px);
+    grid-template-rows: repeat(3, 150px);
+}
+
+.players {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-rows: repeat(2, 300px);
+    grid-template-columns: repeat(2, 171px);
+    grid-auto-flow: row;
+}
+
+.player{
+    position: relative;
+    background-image: url("../images/boxPlayer.jpg");;
+    /*Position relative, donc left indique le décalage vers la droite de l'objet*/
+    /*left: 88%;*/
+    /*width: 150px;
+    height: 200px;*/
+    left: 1045px;
+    top: -1830px;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: solid black 1px;
+    border-radius: 10px;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 80%;
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+#turn {
+    margin: 0px;
+    color: darkred;
+}
+
+.prestige {
+    margin: 0px;
+    color: #0000F0;
+}
+
+.nbTokens {
+    margin: 0px;
+}
+
+.tokensImages {
+    width: 22px;
+    height: 22px;
+}
+
+.cards {
+    position: relative;
+    /*left: 30%;*/
+    left: 441px;
+    top: -535px;
+    width: 470px;
+    display: grid;
+    grid-gap: 10px;
+    grid-row-gap: 36px;
+    grid-template-rows: repeat(3, 150px);
+    grid-template-columns: repeat(4, 110px);
+    /*grid-auto-flow: row;*/
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+.cardLevel {
+    position: relative;
+    width: 110px;
+    height: 150px;
+    border-radius: 5px;
+}
+
+.tokens{
+    position: relative;
+    top: -1173px;
+    /*left: 65%;*/
+    left: 927px;
+}
+
+.token{
+    height: 75px;
+    width: 75px;
+    border: solid 1px black;
+    background-color: #bbb;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    position: relative;
+    /*display: inline-block;*/
+}
+
+.tokens div {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+input {
+    border-radius: 5px;
+    border: none;
+    background-color: black;
+    color: white;
+    font-size: medium;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    width: 25px;
+}
+
+button {
+    font-size: 13px;
+    border-radius: 7px;
+    border: none;
+    background-color: #dd6666;
+}
+
+button:hover {
+    background-color: #444444;
+    box-shadow: 2px 2px 12px 0;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+
+.reserveButton {
+    width: 65px;
+    height: 25px;
+    margin-right: 1px;
+}
+
+.buyButton {
+    width: 37px;
+    height: 25px;
+}
+
+#getTokens {
+    width: 60px;
+    height: 25px;
+    color: black;
+}
+
+#getTokens:hover {
+    color: white;
+}
+
+#quitButton {
+    float:right;
+    font-size: 20px;
+    background-color: white;
+    color: #313131;
+    font-weight: bold;
+    width: 80px;
+    height: 30px;
+}
+
+#quitButton:hover {
+    background-color: #444444;
+    box-shadow: 2px 2px 12px 0;
+    color: white;
+    cursor: pointer;
+}
+
+#ruby {
+    background-image: url("../images/ruby.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+#onyx {
+    background-image: url("../images/onyx.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+#emerald {
+    background-image: url("../images/emerald.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+#saphire {
+    background-image: url("../images/saphire.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+#gold {
+    background-image: url("../images/gold.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+#diamond {
+    background-image: url("../images/diamond.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+.player:hover {
+    transform:scale(1.65);
+    z-index: 1;
+    left: 1000px;
+}
+
+.divReservedCards {
+    overflow: auto;
+    height: 68px;
+    vertical-align: middle;
+}
+
+
+
+.divBuyedCards {
+    height: 75px;
+}
+
+.reservedCards {
+    /*width: 30%;
+    height: 30%;*/
+    width: 30%;
+    height: 100%;
+    position: relative;
+    vertical-align: middle;
+    border-radius: 5px;
+}
+
+.reservedCardss {
+    width: 30%;
+    height: 100%;
+    position: relative;
+    border-radius: 5px;
+    vertical-align: middle;
+}
+
+.buyedCards {
+    width: 25%;
+    height: 20%;
+    position: relative;
+    border-radius: 5px;
+    vertical-align: middle;
+}
+
+.player:hover .reservedCards:hover {
+    width: 110px;
+    height: 150px;
+    position: fixed;
+    border-radius: 5px;
+    top: 155px;
+    z-index: 2;
+}
+
+.imgPlusBtn {
+    display: inline;
+    vertical-align: middle;
+}
+
+#buyPlayer {
+    vertical-align: middle;
+}
+
+.toks {
+    display: inline-block;
+    width: 22px;
+    text-align: center;
+}

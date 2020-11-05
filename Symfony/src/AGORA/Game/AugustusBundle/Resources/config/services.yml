@@ -1,0 +1,9 @@
+services:
+    agora_game.augustus:
+        class: AGORA\Game\AugustusBundle\Service\AugustusService
+        arguments: ["@doctrine.orm.entity_manager"]
+        public: true
+
+    agora_game.augustusController:
+        class: AGORA\Game\AugustusBundle\Controller\GameController
+        arguments: ['@agora_game.augustus']

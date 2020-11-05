@@ -1,0 +1,54 @@
+{% extends "AGORAPlatformBundle::layout.html.twig" %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ asset('bundles/agoraplatform/css/game.css') }}" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" type="text/css" />
+{% endblock %}
+
+{% block title %}{{ parent() }} - classement pour le jeu {{ gameInfo.nom }}{% endblock %}
+
+{% block header %}
+    <h1>Classement pour le jeu {{ gameInfo.nom }}</h1>
+{% endblock %}
+
+{% block content %}
+
+
+<div style="width: 80%; margin: auto">
+    <table id="joinGameTable" class="display" style="width:50%">
+        <thead>
+            <tr>
+                <th>Classement</th>
+                <th>Nom du joueur</th>
+                <th>ELO</th>
+                <th>Nombre de victoires</th>
+                <th>Nombre de défaites</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set counter = 0 %}
+        {% for player in leaderboard %}
+            <tr>
+                <td>{% set counter = counter + 1 %}{{ counter }}</td>
+                <td>
+                    {{ player.idPlayer.username }}
+                </td>
+                <td>{{ player.ELO }}</td>
+                <td>{{ player.nbVic }}</td>
+                <td>{{ player.nbDef }}</td>
+            </tr>
+        </tbody>
+
+
+
+
+        {% endfor %}
+    </table>
+</div>
+    <script>
+        $(document).ready(function() {
+            $('#joinGameTable').DataTable();
+        } );
+    </script>
+
+{% endblock %}

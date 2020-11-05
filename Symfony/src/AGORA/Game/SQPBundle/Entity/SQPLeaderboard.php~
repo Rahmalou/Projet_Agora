@@ -1,0 +1,144 @@
+<?php
+
+namespace AGORA\Game\SQPBundle\Entity;
+
+/**
+ * SQPLeaderboard
+ */
+class SQPLeaderboard
+{
+    /**
+     * @var int
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\OneToOne(targetEntity="AGORA\UserBundle\Entity\User", cascade={"persist"})
+     * @ORM\JoinColumn(name="id_user", referencedColumnName="id")
+     */
+    private $iDPlayer;
+
+    /**
+     * @var int
+     */
+    private $eLO;
+
+    /**
+     * @var int
+     */
+    private $nBVic;
+
+    /**
+     * @var int
+     */
+    private $nBDef;
+
+
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set iDPlayer.
+     *
+     * @param int $iDPlayer
+     *
+     * @return SQPLeaderboard
+     */
+    public function setIDPlayer($iDPlayer)
+    {
+        $this->iDPlayer = $iDPlayer;
+
+        return $this;
+    }
+
+    /**
+     * Get iDPlayer.
+     *
+     * @return int
+     */
+    public function getIDPlayer()
+    {
+        return $this->iDPlayer;
+    }
+
+    /**
+     * Set eLO.
+     *
+     * @param int $eLO
+     *
+     * @return SQPLeaderboard
+     */
+    public function setELO($eLO)
+    {
+        $this->eLO = $eLO;
+
+        return $this;
+    }
+
+    /**
+     * Get eLO.
+     *
+     * @return int
+     */
+    public function getELO()
+    {
+        return $this->eLO;
+    }
+
+    /**
+     * Set nBVic.
+     *
+     * @param int $nBVic
+     *
+     * @return SQPLeaderboard
+     */
+    public function setNBVic($nBVic)
+    {
+        $this->nBVic = $nBVic;
+
+        return $this;
+    }
+
+    /**
+     * Get nBVic.
+     *
+     * @return int
+     */
+    public function getNBVic()
+    {
+        return $this->nBVic;
+    }
+
+    /**
+     * Set nBDef.
+     *
+     * @param int $nBDef
+     *
+     * @return SQPLeaderboard
+     */
+    public function setNBDef($nBDef)
+    {
+        $this->nBDef = $nBDef;
+
+        return $this;
+    }
+
+    /**
+     * Get nBDef.
+     *
+     * @return int
+     */
+    public function getNBDef()
+    {
+        return $this->nBDef;
+    }
+}

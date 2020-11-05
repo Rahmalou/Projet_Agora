@@ -1,0 +1,3 @@
+
+Dans la database symfony : 
+insert into game_info values(3, 2, 4, "Dans Splendor, vous êtes à la tête d'une guilde de marchands. Vous avez pour objectif de vous enrichir et de devenir le commerçant le plus prestigieux du royaume.", "Splendor.jpg", "https://www.spacecowboys.fr/img/games/splendor/details/rules/Rules_Splendor_FR.pdf", "Splendor", "spldr");

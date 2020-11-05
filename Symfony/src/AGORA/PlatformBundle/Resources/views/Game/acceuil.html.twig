@@ -1,0 +1,117 @@
+{% extends "AGORAPlatformBundle::nav.html.twig" %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ asset('bundles/agoraplatform/css/home.css') }}" type="text/css" />
+{% endblock %}
+
+{% block title %}{{ parent() }} - Accueil{% endblock %}
+
+{% block header %}
+
+    <div class="bg">
+        <div id="titleHeader">
+            <h1>PLATEFORME AGORA</h1>
+            <h3>JEUX DE PLATEAUX ONLINE</h3>
+            <button type="button" class="btn btn-danger btn-lg buttonInfo ">INFORMATIONS</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div id="page-container">
+
+        <div id="objectifProject">
+            <h2>AGORA, UN PROJET UNIVERSITAIRE</h2>
+            <hr>
+            <div class="row blurb">
+                <div class="col-sm-4 flexRow" >.
+                    <div class="imageObjectif">
+                        <img src="{{ asset('bundles/agoraplatform/image/project/sticker.png') }}" width="32" height="32">
+                    </div>
+                    <div class="textObjectif">
+                        <h3>Nouvelles technologies</h3>
+                        <p>Symfony vel quam nunc. Quisque tempor tempus aliquet. Donec egestas odio et tempor.</p>
+                    </div>
+                </div>
+                <div class="col-sm-4 flexRow">.
+                    <div class="imageObjectif">
+                        <img src="{{ asset('bundles/agoraplatform/image/project/chart.png') }}" width="32" height="32">
+                    </div>
+                    <div class="textObjectif">
+                        <h3>Jeux de plateaux</h3>
+                        <p>Symfony vel quam nunc. Quisque tempor tempus aliquet. Donec egestas odio et tempor.</p>
+                    </div>
+                </div>
+                <div class="col-sm-4 flexRow">.
+                    <div class="imageObjectif">
+                        <img src="{{ asset('bundles/agoraplatform/image/project/controls.png') }}" width="32" height="32">
+                    </div>
+                    <div class="textObjectif">
+                        <h3>Admin DashBoard</h3>
+                        <p>Symfony vel quam nunc. Quisque tempor tempus aliquet. Donec egestas odio et tempor.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row blurb" style="margin-bottom: 30px">
+                <div class="col-sm-4 flexRow" style="padding-right: 15px">.
+                    <div class="imageObjectif">
+                        <img src="{{ asset('bundles/agoraplatform/image/project/chronometer.png') }}" width="32" height="32">
+                    </div>
+                    <div class="textObjectif">
+                        <h3>En temps réel</h3>
+                        <p>Symfony vel quam nunc. Quisque tempor tempus aliquet. Donec egestas odio et tempor.</p>
+                    </div>
+                </div>
+                <div class="col-sm-4 flexRow">.
+                    <div class="imageObjectif">
+                        <img src="{{ asset('bundles/agoraplatform/image/project/group.png') }}" width="32" height="32">
+                    </div>
+                    <div class="textObjectif">
+                        <h3>Une équipe de 5</h3>
+                        <p>Symfony vel quam nunc. Quisque tempor tempus aliquet. Donec egestas odio et tempor.</p>
+                    </div>
+                </div>
+                <div class="col-sm-4 flexRow">.
+                    <div class="imageObjectif">
+                        <img src="{{ asset('bundles/agoraplatform/image/project/bar-chart.png') }}" width="32" height="32">
+                    </div>
+                    <div class="textObjectif">
+                        <h3>Gestion d'un grand projet</h3>
+                        <p>Symfony vel quam nunc. Quisque tempor tempus aliquet. Donec egestas odio et tempor.</p>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-danger btn-lg buttonInfo widthButton hvr-overline-from-left">LES JEUX</button>
+        </div>
+
+    </div>
+
+    <div id="plateforme-section">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 no-float" id="bg-plateforme">
+                    <!--<img id="imgColumnLeft" src="{{ asset('bundles/agoraplatform/image/dice.jpg') }}">-->
+                </div>
+                <div class="col-sm-6 no-float" id="text-plateforme">
+                    <h3>LA PLATEFORME</h3>
+                    <hr>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mauris est, aliquet nec dolor
+                        nec, tempor laoreet urna. Quisque lobortis dignissim felis, eu aliquam odio. Aliquam malesuada ante
+                        a est consequat ullamcorper.</p>
+
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mauris est, aliquet nec dolor
+                        nec, tempor laoreet urna. Quisque lobortis dignissim felis, eu aliquam odio. Aliquam malesuada ante
+                        a est consequat ullamcorper</p>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

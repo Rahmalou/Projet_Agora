@@ -1,0 +1,105 @@
+/* Style the navbar */
+
+nav {
+    overflow: visible;
+    background-color: #333;
+    height: 48px; !important;
+}
+
+/* Navbar links */
+nav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+}
+
+/* Page content */
+#content {
+    padding: 16px;
+}
+
+/* The sticky class is added to the navbar with JS when it reaches its scroll position */
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
+.sticky #content {
+    padding-top: 60px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    background-color: #333;
+    height: 48px;
+}
+
+
+nav li {
+    float: left;
+}
+
+nav li * {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    height: 48px;
+}
+
+.span-like {
+    font-size: 0.8em;
+}
+
+.right {
+    float: right;
+    margin-right: 0.5em;
+}
+
+.btn-green {
+    background-color: #4CAF50;
+}
+
+.btn-green:hover, .left:hover {
+    background-color: #222222;
+    text-decoration: none;
+}
+
+.left:hover a, .right:hover a {
+    text-decoration: none;
+}
+
+.dropdown-contener {
+    position: relative;
+    display: block;
+    width: auto;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgba(34, 34, 34, 0.7);
+    width: 200%;
+    /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
+    height: auto;
+    left: 0%;
+    top: 100%;
+    padding-top: 0%;
+    /*overflow: scroll;*/
+    vertical-align: center;
+    /*z-index: 3;*/
+}
+
+
+.dropdown-contener:hover .dropdown-content {
+    display: inline-block;
+}

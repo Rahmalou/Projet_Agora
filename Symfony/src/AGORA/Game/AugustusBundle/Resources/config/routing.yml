@@ -1,0 +1,17 @@
+agora_game_create_aug:
+  path: /create
+  defaults: { _controller: AugustusBundle:Game:createRoom }
+
+agora_game_join_aug:
+  path: /join/{gameId}
+  defaults: { _controller: AugustusBundle:Game:joinRoom }
+
+agora_game_index_aug:
+  path: /index/{gameId}
+  defaults: { _controller: AugustusBundle:Game:index }
+
+
+
+agora_game_body_aug:
+  path: /body/{gameId}/{playerId}
+  defaults: { _controller: AugustusBundle:Game:body }
